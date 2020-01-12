@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<nav class="navbar navbar-default"  style="background-image:url(https://pixabay.com/photos/dawn-tree-dusk-birds-abendstimmung-3358468/); height:100px;background-position:0% 25%;background-size:cover ;">
+  <div class="container-fluid">
+    <div class="navbar-header">
+     <a class="navbar-brand" href="{% url 'Index' %}" style="font-family: 'Lobster', cursive; font-size:35px;color:rgb(41, 52, 100);"><i class="fa fa-camera-retro" style="font-size:40px;color:rgb(71, 10, 20); "></i>  Project Rator
+    </a>
+   </div>
+   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class=""><a href="{%url 'Home'%}"  style="font-family: 'Lobster', cursive;font-size:30px;"><span class="glyphicon glyphicon-home"style="font-size:40px;color:blueviolet;"></span><span class="sr-only">(current)</span></a></li>
+        <li class=""><a href="{%url 'Image'%}" style="font-family: 'Lobster', cursive;font-size:20px;"><span class="glyphicon glyphicon-plus" aria-hidden="true" style="font-size:40px;color:blueviolet;"></span> <span class="sr-only"></span></a></li>
+
+      </ul>
+
+    {% if user.is_authenticated %}
+
+      <div class="col-sm-4 col-md-4 navbar-right">
+
+
+
+
+              <ul>
+
+                  <a href="#" style="color:blue;font-family: 'Lobster', cursive;font-size:25px;" class="dropdown-toggle" role="button"data-toggle="dropdown"  aria-expanded="false"><span class="glyphicon glyphicon-user" style="font-size:40px;color:blue;"aria-hidden="true"></span> Account
+                            <span class="caret"></span>
+                        </a>
+
+                  <ul class="dropdown-menu" role="menu">
+                    <li>
+                      <a href="{%url 'Index'%}">Home</a>
+                    </li>
+                    <li>
+                      <a href="/accounts/password/change">Change Password</a>
+                    </li>
+                    <li>
+                      <a href="#">Edit profile</a>
+                    </li>
+                    <li>
+                      <a href="{%url 'Image' %}">Add image</a>
+                    </li>
+
+                    <li>
+                      <a href="/logout">Logout</a>
+                    </li>
+                  </ul>
+
+              </ul>
+
+              {% else %}
+              <li>
+                <a class='btn btn-default' href="/accounts/login">Login</a>
+              </li>
+
+              {% endif %}
+            </div>
+
+
+
+  </div>
+</div>
+</nav>
+</body>
+</html>
