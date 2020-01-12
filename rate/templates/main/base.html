@@ -1,24 +1,55 @@
+{% load bootstrap3 %}
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-
-  {% if title %}
-  <title> Project Rator- {{title}}</title>
-  {% else %}
-    <title> Project Rator</title>
-  {% endif %}
-
+  <title>Project Rator</title>
   {% block styles %}
-    {% bootstrap_css %}
+   {% bootstrap_css %}
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  {% endblock %}
+  <style>
+  .card {
+      /* Add shadows to create the "card" effect */
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+      transition: 0.3s;
+
+  }
+
+  /* On mouse-over, add a deeper shadow */
+  .card:hover {
+      box-shadow: 0 8px 29px 0 rgba(0,0,0,0.2);
+  }
+  h1{color:yellow}
+  .row-flex {
+    display: flex;
+    flex-wrap: wrap;
+    height:300px;
+  }
+
+
+  /* vertical spacing between columns */
+
+  [class*="col-"] {
+    margin-bottom: 30px;
+
+  }
+  </style>
+</head>
+
+<body>
+  {% include "navbar.html" %}
+  {% block content %}
+
   {% endblock %}
 
-</head>
-<body>
-    
-    {% block scripts %}
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        {% bootstrap_javascript %}
-    {% endblock %}
+  {% block scripts %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+     {% bootstrap_javascript %}
+     {% endblock %}
 </body>
 </html>
