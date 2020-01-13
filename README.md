@@ -17,3 +17,9 @@ project rating is an app build with python3.6,its an app that allows you to logi
 ## To run the application, in your terminal:
 
 $ python3 manage.py runserver
+
+
+## Testing the Application
+tests on class files
+
+  $ python3 manage.py test
