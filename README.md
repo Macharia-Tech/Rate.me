@@ -13,3 +13,7 @@ project rating is an app build with python3.6,its an app that allows you to logi
 - Git clone repo then you will need to install venv that is a  virtual enviroment and run source virtual/bin/activate
 
 - Then pip freeze > requirements.txt
+
+## To run the application, in your terminal:
+
+$ python3 manage.py runserver
