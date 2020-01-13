@@ -23,3 +23,14 @@ $ python3 manage.py runserver
 tests on class files
 
   $ python3 manage.py test
+
+
+## Technologies Used
+This project was generated using
+
+1.Python version 3.8.0.
+2.Django
+3.Bootstrap
+4.javascript
+5.PSQL database
+6.HTML,CSS
