@@ -53,9 +53,5 @@ class Image(models.Model):
         return images
     def total_likes(self):
         return self.likes.count()
-class Comment (models.Model):
-    comment=models.CharField(max_length=50)
-    image=models.ForeignKey(Image,null=True)
-    user=models.ForeignKey(User,null=True)
 
 #Add the following field to User dynamically
