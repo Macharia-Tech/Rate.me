@@ -33,7 +33,7 @@ def signup(request):
     return render (request,'signup.html',{'form':form})
 @login_required(login_url='/accounts/login')
 def home(request):
-    title='Welcome to Instaphoto'
+    title='Welcome to Project Rator'
     current_user=request.user
     profile_info=Profile.objects.all()
     profile=Profile.objects.get(user=current_user)
@@ -43,7 +43,7 @@ def home(request):
     return render(request,'main/home.html',{"title":title,"profile_info":profile_info,"images":images})
 @login_required(login_url='/accounts/login')
 def index(request):
-    title='Welcome to instagram'
+    title='Welcome to Project Rator'
 
 
     return render(request,'main/index.html',{"title":title})
@@ -75,23 +75,51 @@ class ProfileList(APIView):
         all_profile = Profile.objects.all()
         serializers = ProfileSerializer(all_profile, many=True)
         return Response(serializers.data)
-def add_image(request):
-    current_user=request.user
-    profiles=Profile.get_profile()
-    for profile in profiles:
-        form=ImageForm(request.POST,request.FILES)
-        profile_instance=Profile.objects.get(id=request.user.id)
-        if request.method == 'POST':
-            if form.is_valid():
-                image=form.save(commit=False)
-                image.profile=profile_instance
-                image.save()
-                return redirect(first_profile,request.user.id)
 
-        else:
-            form=ImageForm()
+class ProjectList(APIView):
+    '''
+    End point that returns all projects posted and the details such as title,
+    image,description and live link to the project
+    '''
+    def get(self, request, format=None):
+        all_project = Project.objects.all()
+        serializers = ProjectSerializer(all_project, many=True)
+        return Response(serializers.data)
+     
 
-    return render(request,'main/image.html',{"form":form})
+@login_required(login_url='/accounts/login/')
+def add_project(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = NewProjectForm(request.POST, request.FILES)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.editor = current_user
+            project.save()
+        return redirect('home')
+
+    else:
+        form = NewProjectForm()
+    return render(request, 'new_project.html', {"form": form})
+
+@login_required(login_url='/accounts/login/')
+def new_profile(request):
+    '''
+    Used for creating a new profile for the user. It includes a profile photo, a bio and contact 
+    '''
+    current_user = request.user
+    if request.method == 'POST':
+        form = NewProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.editor = current_user
+            profile.save()
+        return redirect('home')
+
+    else:
+        form = NewProfileForm()
+    return render(request, 'new_profile.html', {"form": form})    
+
 @login_required(login_url='/accounts/login/')
 def single_project(request,project_id):
     '''
@@ -115,6 +143,21 @@ def add_rating(request):
         content = request.POST.get("content", None) 
     
     return render(request,'rate.html')
+    
+@login_required(login_url='/accounts/login/')
+def search_title(request):
+    '''
+    This method searches for an image by using the name of the image
+    '''
+    if 'title' in request.GET and request.GET["title"]:
+        search_term=request.GET.get("title")
+        searched_titles=Project.search_by_title(search_term)
+        message=f"{search_term}"
+
+        return render(request,"search.html",{"message":message,"titles":searched_titles})
+    else:
+        message="You haven't searched for any term"
+        return render(request,'search.html',{"message":message})
 
 
 def register(request):
