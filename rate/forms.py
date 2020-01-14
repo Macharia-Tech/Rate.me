@@ -1,5 +1,5 @@
 from django import forms
-from .models import Profile,Image,Comment
+from .models import Profile,Image
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
