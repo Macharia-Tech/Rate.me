@@ -1,0 +1,13 @@
+{%extends 'main/base.html'%}
+{% load bootstrap3 %}
+{% load static %}
+
+{% block content %}
+    <h2>You have been looged out</h2>
+        <div class="border-top pt-3">
+            <small class="text-muted">
+                Already Have An Account? <a class="ml-2" href="{% url 'login'%}">Log In Again</a>
+            </small>
+        </div>
+      
+{% endblock content%}

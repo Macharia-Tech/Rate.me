@@ -1,9 +1,9 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import ProfileForm,ImageForm,SignUpForm,UserForm
-from .models import Profile,Image
+from django.contrib import messages
+from .forms import SignUpForm,UserForm
 from django.http import Http404,HttpResponseRedirect
-from django.contrib.auth.forms import UserCreationForm
+from .forms import UserRegisterForm
 from django.db import transaction
 from django.contrib.auth import login,authenticate
 from django.contrib.auth.models import User
@@ -81,10 +81,7 @@ def add_image(request):
             form=ImageForm()
 
     return render(request,'main/image.html',{"form":form})
-'''
-we set is_liked=false thus it will present the like button but if the exists a user id
- in the likes then is liked is set to true thus the button presented is dislike
-'''
+
 def details(request,image_id):
     current_image=Image.objects.get(id=image_id)
     images=Image.objects.get(id=image_id)
@@ -105,65 +102,19 @@ def details(request,image_id):
 
     return render(request,'main/details.html',{"image_details":image_details,"comment_details":comment_details,"images":images,"is_liked":is_liked,"total_likes":images.total_likes(),"images_profile":images_profile})
 
-def search_profile(request):
-    search_term=request.GET.get("profile")
-    searched_profiles=Profile.search(search_term)
-    return render (request,'main/search.html',{"searched_profiles":searched_profiles})
-def nav(request,profile_id):
-    title='hello'
-    profile_info=Profile.objects.get(id=profile_id)
-    return render(request,'navbar1.html',{"profile_info":profile_info})
-def comment(request,image_id):
-    current_user= request.user
-    current_image=Image.objects.get(id=image_id)
 
-    if request.method == 'POST':
-        form=CommentForm(request.POST,request.FILES)
+
+
+
+def register(request):
+    if request.method =='POST':
+
+        form = UserRegisterForm(request.POST)
         if form.is_valid():
-            comment_form=form.save(commit=False)
-            comment_form.user=current_user
-            comment_form.image=current_image
-            comment_form.save()
-
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request,f' Your Account has been created for {username}!')
+            return redirect('login')
     else:
-            form=CommentForm()
-
-    return render (request ,'main/comment.html',{"form":form,"current_image":current_image})
-'''
-we set is_liked to false thus the like button is presented and when clicked they are removed from the db
- if they exist we remove them from the db
-else we add them and is like is true thus presenting the dislike button
-'''
-def like_post(request,image_id):
-    post=Image.objects.get(id=image_id)
-    is_liked=False
-    if post.likes.filter(id=request.user.id).exists() :
-        post.likes.remove(request.user)
-        is_liked = False
-    else:
-        post.likes.add(request.user)
-        is_liked=True
-    return redirect(details,post.id)
-def follow(request,user_id):
-
-    follows=Profile.objects.get(id=request.user.id)
-    user1=User.objects.get(id=user_id)
-    #user=Profile.objects.get(id=user_id)
-    is_follow=False
-    if follows.follow.filter(id=user_id).exists():
-        follows.follow.remove(user1)
-        is_follow=False
-    else:
-        follows.follow.add(user1)
-        is_follow=True
-
-    print(follows)
-
-    print(user1)
-
-# Who am following
-    print(follows.follow.all())
-# Who is following me
-    print(follows.user.who_following.all())
-
-    return redirect(first_profile ,user1.id)
+        form=UserRegisterForm()
+    return render(request, 'users/register.html',{'form':form})
