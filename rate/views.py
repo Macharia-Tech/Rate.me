@@ -66,6 +66,15 @@ def first_profile(request,profile_id):
     followers=follows.user.who_following.all()
     return render(request,'main/profile.html',{"profile_info":profile_info,"images":images,"current_id":current_id,"is_follow":is_follow,"total_following":follows.total_following(),"following":following,"followers":followers})
 
+class ProfileList(APIView):
+    '''
+    End point that returns all the profile details such as bio,
+    profile_pic,projects posted and contact information
+    '''
+    def get(self, request, format=None):
+        all_profile = Profile.objects.all()
+        serializers = ProfileSerializer(all_profile, many=True)
+        return Response(serializers.data)
 def add_image(request):
     current_user=request.user
     profiles=Profile.get_profile()
@@ -83,29 +92,29 @@ def add_image(request):
             form=ImageForm()
 
     return render(request,'main/image.html',{"form":form})
+@login_required(login_url='/accounts/login/')
+def single_project(request,project_id):
+    '''
+    This method displays a single photo and its details such as comments, date posted and caption
+    '''
 
-def details(request,image_id):
-    current_image=Image.objects.get(id=image_id)
-    images=Image.objects.get(id=image_id)
+    project_posted=Project.single_project(project_id)  
+    imageId=Project.get_image_id(project_id)
+    rating=Rating.get_rating_byproject_id(project_id)
 
+    design=Rating.design
+    usability=Rating.usability
+    content=Rating.content
 
-    is_liked=False
-    if images.likes.filter(id=request.user.id).exists():
-        is_liked = True
-
-    try:
-        image_details = Image.objects.get(id=image_id)
-    except DoesNotExsist:
-        raise Http404()
-
-    images_profile=Image.objects.filter(id=image_id)
-
-    comment_details=Comment.objects.filter(image=current_image)
-
-    return render(request,'main/details.html',{"image_details":image_details,"comment_details":comment_details,"images":images,"is_liked":is_liked,"total_likes":images.total_likes(),"images_profile":images_profile})
-
-
-
+ 
+@login_required(login_url='/accounts/login/')
+def add_rating(request):
+    if request.method == "POST":      
+        design = request.POST.get("design", None)
+        usability = request.POST.get("usability", None)
+        content = request.POST.get("content", None) 
+    
+    return render(request,'rate.html')
 
 
 def register(request):
