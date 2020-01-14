@@ -4,9 +4,11 @@ from django.contrib import messages
 from .forms import SignUpForm,UserForm
 from django.http import Http404,HttpResponseRedirect
 from .forms import UserRegisterForm
-from django.db import transaction
 from django.contrib.auth import login,authenticate
 from django.contrib.auth.models import User
+from rest_framework.views import APIView
+from .models import  Project
+from .serializer import ProjectSerializer
 # Create your views here.
 def signup(request):
     if request.method == 'POST':
