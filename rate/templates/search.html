@@ -1,58 +1,36 @@
 {%extends 'main/base.html'%}
-{% load bootstrap3%}
+{% load bootstrap4%}
 {%load static%}
 
 {{block.super}}
 {%block content%}
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
+{{form.media}}
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<div class="col-lg-5 my-auto">
+  <div class="device-container">
 
-    
+    {% if titles%}
+    <h2>Found {{ titles|length }} of searched term {{message}}</h2>
 
-  <title>Search</title>
-  {{form.media}}
+    {% else %}
+    <h2> Found 0 project titles for the search term {{message}}</h2>
+    {% endif %}
 
-{% block styles %} 
-{% bootstrap_css %}
- 
-   {% endblock %}
-</head>
 
-<body>
 
-        <div class="col-lg-5 my-auto">
-                <div class="device-container">
-        
-                  {% if titles%}
-                  <h2>Found {{ titles|length }} of searched term {{message}}</h2>
-        
-                  {% else %}
-                  <h2> Found 0 project titles for the search term {{message}}</h2>
-                  {% endif %}
-        
-        
-        
-                  {% if titles%}
-                  {% for titles in titles %}
-        
-                  <h1>Title: {{titles.title}}</h1>
-                  <h2>Click photo to view more</h2>
-                  <a href="{%url 'project' titles.id%}"><img src="{{titles.image.url}}" alt="image"
-                      style="height:300px;width: 300px;"></a>
-                </div>
+    {% if titles%}
+    {% for titles in titles %}
 
-                {% endfor %}
-                {% endif %}
-              </div>
+    <h1>Title: {{titles.title}}</h1>
+    <h2>Click photo to view more</h2>
+    <a href="{%url 'project' titles.id%}"><img src="{{titles.image.url}}" alt="image"
+        style="height:300px;width: 300px;"></a>
+  </div>
 
-            </body>
-            </html>
+  {% endfor %}
+  {% endif %}
+</div>
+
 {%endblock%}

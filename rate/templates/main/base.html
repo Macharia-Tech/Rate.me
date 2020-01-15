@@ -1,4 +1,4 @@
-{% load bootstrap3 %}
+{% load bootstrap4 %}
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -10,14 +10,27 @@
   <title>{{title}}</title>
   {%endif%}
   {% block styles %}
-    {% bootstrap_css %}
+  {% bootstrap_css %}
   {% endblock %}
 </head>
+
 <body>
-  {% block content %}  {%endblock%}
+  {%include 'navbar.html'%}
+  {% block content %} {%endblock%}
   {% block scripts %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    {% bootstrap_javascript %}
+  <link href="https://fonts.googleapis.com/css?family=Niconne&display=swap" rel="stylesheet">
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="{% static 'js/jquery.easing.min.js' %}"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="{% static 'js/stylish-portfolio.min.js' %}"></script>
+  {% bootstrap_javascript %}
   {% endblock %}
+
 </body>
+
 </html>

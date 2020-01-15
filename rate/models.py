@@ -94,7 +94,7 @@ class Project(models.Model):
         '''
         function gets projects posted by id
         '''
-        project_posted=cls.objects.get(editor=user_id)
+        project_posted=cls.objects.filter(editor=user_id)
         return project_posted    
 
     @classmethod
