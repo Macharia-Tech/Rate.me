@@ -1,30 +1,30 @@
 from django.shortcuts import render,redirect,get_object_or_404
+from django.http import HttpResponse,Http404,HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.http import Http404,HttpResponseRedirect
-from django.contrib.auth import login,authenticate
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
+from .forms import NewProjectForm,NewProfileForm
+from .models import Project,Profile,Rating
+from .serializer import ProfileSerializer,ProjectSerializer
+from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import  Project
-from .serializer import ProjectSerializer
 # Create your views here.
 
-@login_required(login_url='/accounts/login')
+@login_required(login_url='/accounts/login/')
 def home(request):
-    title='Welcome to Project Rator'
-    current_user=request.user
-    profile_info=Profile.objects.all()
-    profile=Profile.objects.get(user=current_user)
-    images=Image.objects.all()
+    '''
+    View for the main homepage.
+    '''
+    all_projects=Project.objects.all()
+    logged_in_user = request.user
+    logged_in_user_projects=Project.objects.filter(editor=logged_in_user)
+    try:
+        profile=Profile.objects.filter(editor=logged_in_user)
+    except Profile.DoesNotExist:
+        profile=None
+    return render(request,'home.html',{"projects":logged_in_user_projects,"profile":profile,"allprojects":all_projects})
 
-
-    return render(request,'main/home.html',{"title":title,"profile_info":profile_info,"images":images})
-@login_required(login_url='/accounts/login')
-def index(request):
-    title='Welcome to Project Rator'
-
-
-    return render(request,'main/index.html',{"title":title})
 @login_required
 def first_profile(request,profile_id):
     current_id=request.user.id
@@ -65,20 +65,37 @@ class ProjectList(APIView):
         return Response(serializers.data)
      
 
-@login_required(login_url='/accounts/login/')
-def add_project(request):
-    current_user = request.user
-    if request.method == 'POST':
-        form = NewProjectForm(request.POST, request.FILES)
-        if form.is_valid():
-            project = form.save(commit=False)
-            project.editor = current_user
-            project.save()
-        return redirect('home')
+# @login_required(login_url='/accounts/login/')
+# def add_project(request):
+#     current_user = request.user
+#     if request.method == 'POST':
+#         form = NewProjectForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             project = form.save(commit=False)
+#             project.editor = current_user
+#             project.save()
+#         return redirect('home')
 
+#     else:
+#         form = NewProjectForm()
+#     return render(request, 'new_project.html', {"form": form})
+
+@login_required(login_url='/accounts/login')
+def add_project(request):
+    if request.method == 'POST':
+        uploadform = NewProjectForm(request.POST, request.FILES)
+        if uploadform.is_valid():
+            upload = uploadform.save(commit=False)
+       
+            upload.save()
+            return redirect('home_page')
     else:
-        form = NewProjectForm()
-    return render(request, 'new_project.html', {"form": form})
+        uploadform = NewProjectForm()
+    return render(request,'new_project.html',locals())
+
+
+
+
 
 @login_required(login_url='/accounts/login/')
 def new_profile(request):
@@ -111,6 +128,8 @@ def single_project(request,project_id):
     design=Rating.design
     usability=Rating.usability
     content=Rating.content
+
+    return render(request,'project.html',{"project":project_posted})
 
  
 @login_required(login_url='/accounts/login/')
@@ -150,3 +169,18 @@ def register(request):
     else:
         form=UserRegisterForm()
     return render(request, 'users/register.html',{'form':form})
+
+@login_required(login_url='/accounts/login/')
+def display_profile(request,user_id):
+    '''
+    View for displaying a single profile
+    '''
+    try:
+        single_profile=Profile.single_profile(user_id)              
+        projects_posted=Project.user_projects(user_id)
+        return render(request,'profiledisplay.html',{"profile":single_profile,"projects":projects_posted})
+    except Profile.DoesNotExist:
+        messages.info(request,'The user has not set a profile yet')
+    except Project.DoesNotExist:
+        messages.info(request,'The user has not posted a project yet')
+        return redirect('home')    

@@ -1,4 +1,4 @@
-{%load bootstrap4%}
+{%load bootstrap3%}
 {%load static%}
 {{block.super}}
 {%block content%}
@@ -47,7 +47,7 @@
 
     <ul class="sidebar-nav">
       <li class="sidebar-brand">
-        <a href="#page-top">Project Hub</a>
+        <a href="#page-top">Project Rator</a>
       </li>
       <li class="sidebar-nav-item">
         <a class="js-scroll-trigger" href="{%url 'home'%}">Home</a>
@@ -84,12 +84,12 @@
       <div class="col-lg-7 my-auto">
 
 
-        <form action="{%url 'add-project'%}" method="post" enctype="multipart/form-data">
-          {%csrf_token%}
-
-          {% bootstrap_form form%}
-          <input type="submit" class="btn btn-success btn-lg" value="Post">
+        <form action="{% url 'add-project' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% bootstrap_form uploadform %}
+          <input type="submit" class="btn btn-outline-success" value="Upload">
         </form>
+
 
         <div class="button">
           <!-- You can hook the "home button" to some JavaScript events or just remove it -->

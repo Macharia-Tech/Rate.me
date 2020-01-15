@@ -1,0 +1,129 @@
+{%load bootstrap3%}
+{%load static%}
+{{block.super}}
+{%block content%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>New Profile
+    </title>
+    {{form.media}}
+
+    {% block styles %}
+    {% bootstrap_css %}
+
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+
+    <!-- Custom Fonts -->
+
+    <link href="{% static 'css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic"
+        rel="stylesheet" type="text/css">
+    <link href="{% static 'css/simple-line-icons.css' %}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{% static 'css/stylish-portfolio.min.css' %}" rel="stylesheet">
+    {%endblock%}
+</head>
+
+<body id="page-top">
+
+    <!-- Navigation -->
+    {% if user.is_authenticated %}
+    <a class="menu-toggle rounded" href="#">{{user.username}}
+        <i class="fas fa-bars"></i>
+    </a>
+    <nav id="sidebar-wrapper">
+
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand">
+                <a href="#page-top">Project Hub</a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a class="js-scroll-trigger" href="{%url 'home'%}">Home</a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="{%url 'add-project' %}">Post Project</a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="{%url 'new-profile'%}">Add Profile</a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="{% url 'displayprofile' user.id %}">View Profile</a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href="/accounts/password/change">Change password</a>
+            </li>
+            <li class="sidebar-nav-item">
+                <a href=" /logout">Log out</a>
+            </li>
+            {%else%}
+
+            <li class="sidebar-nav-item">
+                <a href=" /accounts/login">Log in</a>
+            </li>
+            {%endif%}
+
+        </ul>
+    </nav>
+
+
+    <!-- About -->
+    <header class="masthead " id="about">
+        <div class="container text-center my-auto">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="col-lg-10 my-auto">
+                        <div class="device-container">
+
+                            <form action="{%url 'new-profile'%}" method="post" enctype="multipart/form-data">
+                                {%csrf_token%}
+
+                                {% bootstrap_form form%}
+                                <input type="submit" class="btn btn-success btn-lg" value="Post">
+                            </form>
+
+                            <div class="button">
+                                <!-- You can hook the "home button" to some JavaScript events or just remove it -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded js-scroll-trigger" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="{% static 'js/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="{% static 'js/stylish-portfolio.min.js' %}"></script>
+
+</body>
+
+</html>
+{%endblock%}
