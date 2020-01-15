@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rate.apps.RateConfig',
     'bootstrap3',
+    'tinymce',
    
 ]
 
