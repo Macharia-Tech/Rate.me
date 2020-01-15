@@ -1,7 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import SignUpForm,UserForm
 from django.http import Http404,HttpResponseRedirect
 from .forms import UserRegisterForm
 from django.contrib.auth import login,authenticate
@@ -10,27 +9,7 @@ from rest_framework.views import APIView
 from .models import  Project
 from .serializer import ProjectSerializer
 # Create your views here.
-def signup(request):
-    if request.method == 'POST':
-        form=SignUpForm(request.POST,request.FILES)
-        if form.is_valid():
-            user=form.save()
-            user.refresh_from_db()
-            user.profile.name=form.cleaned_data.get('name')
 
-            user.profile.Bio=form.cleaned_data.get('Bio')
-
-            user.profile.profile_image=form.cleaned_data.get('profile_image')
-            user.save()
-            raw_password=form.cleaned_data.get('password1')
-            user=authenticate(username=user.username,password=raw_password)
-            return redirect (home)
-            login(request, user)
-            return redirect (home)
-
-    else:
-        form=SignUpForm()
-    return render (request,'signup.html',{'form':form})
 @login_required(login_url='/accounts/login')
 def home(request):
     title='Welcome to Project Rator'
