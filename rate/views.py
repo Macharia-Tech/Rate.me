@@ -65,20 +65,20 @@ class ProjectList(APIView):
         return Response(serializers.data)
      
 
-# @login_required(login_url='/accounts/login/')
-# def add_project(request):
-#     current_user = request.user
-#     if request.method == 'POST':
-#         form = NewProjectForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             project = form.save(commit=False)
-#             project.editor = current_user
-#             project.save()
-#         return redirect('home')
+@login_required(login_url='/accounts/login/')
+def add_project(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = NewProjectForm(request.POST, request.FILES)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.editor = current_user
+            project.save()
+        return redirect('home')
 
-#     else:
-#         form = NewProjectForm()
-#     return render(request, 'new_project.html', {"form": form})
+    else:
+        form = NewProjectForm()
+    return render(request, 'new_project.html', {"form": form})
 
 @login_required(login_url='/accounts/login')
 def add_project(request):
