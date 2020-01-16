@@ -54,7 +54,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 #  SECURITY WARNING: keep the secret key used in production secret!
- SECRET_KEY = '=m(+@df5t9jsujq55l6qd7v4e&(d(2ho+_k^-ru81^&6gtll=f'
+ SECRET_KEY = '123'
 
  # SECURITY WARNING: don't run with debug turned on in production!
  DEBUG = True
