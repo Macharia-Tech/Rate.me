@@ -57,7 +57,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 SECRET_KEY='123'
 
  # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
