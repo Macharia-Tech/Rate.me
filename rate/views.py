@@ -76,13 +76,6 @@ def single_project(request,project_id):
     content=Rating.content
     
 
-    
-    # try:
-    #     photo=Image.objects.get(id=photo_id)
-
-    # except DoesNotExist:
-    #     raise Http404()
-
     return render(request,'project.html',{"project":project_posted})
 
 @login_required(login_url='/accounts/login/')
