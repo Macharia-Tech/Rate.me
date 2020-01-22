@@ -96,7 +96,7 @@ def new_profile(request):
         if form.is_valid():
             profile = form.save(commit=False)
             profile.editor = current_user
-            profile.save()
+            
         return redirect('home')
 
     else:
