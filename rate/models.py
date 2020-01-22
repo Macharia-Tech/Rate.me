@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 #Add the following field to User dynamically
@@ -11,8 +12,20 @@ class Profile(models.Model):
     profile_photo=models.ImageField(upload_to='images/',blank=True)
     bio=models.CharField(max_length=100)
     contact=models.CharField(max_length=25)
-    editor = models.ForeignKey(User,on_delete=models.CASCADE)
+    editor = models.OneToOneField(User,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.editor.username} Profile'
+    @receiver(post_save, sender=User)
     
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(editor=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()
+
     def __str__(self):
         '''
         Setting up self 
@@ -44,7 +57,7 @@ class Profile(models.Model):
         '''
         function gets a single profile posted by id
         '''
-        profile=cls.objects.filter(editor=user_id)
+        profile=cls.objects.filter(id=user_id)
         return profile
 
     @classmethod
@@ -61,7 +74,7 @@ class Project(models.Model):
     description=models.CharField(max_length=255)
     link=models.URLField( max_length=128, db_index=True,unique=True,blank=True)
     editor = models.ForeignKey(User,on_delete=models.CASCADE)
-    profile=models.ForeignKey(Profile,on_delete=models.CASCADE)
+  
 
     def __str__(self):
         '''

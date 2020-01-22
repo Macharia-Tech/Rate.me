@@ -28,7 +28,7 @@
 
                 <h1>{{profile.editor.username}} Profile</h1>
                 <div>
-                    <img src="{{profile.profile_photo.url}}" class="img-fluid" style="height:300px;width:300px;">
+                    <img src="{profile.image.url}" class="img-fluid" style="height:300px;width:300px;">
                 </div>
 
                 <div>
@@ -62,10 +62,10 @@
             <a href="{{projects.link}}">Project Link: {{projects.link}}</a>
 
             <div>
-                <img src="{{projects.image.url}}" alt="image" height="300px;" width="300px;">
+                <img src="{projects.profile_photo.url}" alt="image" height="300px;" width="300px;">
             </div>
+            
 
-            <a href="{%url 'project' projects.id%}">View more about this project</a>
 
         </div>
         {%endif%}

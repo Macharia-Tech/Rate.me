@@ -9,40 +9,6 @@ from .models import Project,Profile,Rating
 from .serializer import ProfileSerializer,ProjectSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-# Create your views here.
-
-@login_required(login_url='/accounts/login/')
-def home(request):
-    '''
-    View for the main homepage.
-    '''
-    all_projects=Project.objects.all()
-    logged_in_user = request.user
-    logged_in_user_projects=Project.objects.filter(editor=logged_in_user)
-    try:
-        profile=Profile.objects.filter(editor=logged_in_user)
-    except Profile.DoesNotExist:
-        profile=None
-    return render(request,'home.html',{"projects":logged_in_user_projects,"profile":profile,"allprojects":all_projects})
-
-@login_required
-def first_profile(request,profile_id):
-    current_id=request.user.id
-    current_profile=Profile.objects.get(id=profile_id)
-    try:
-        profile_info =Profile.objects.get(id=profile_id)
-    except DoesNotExsist:
-        raise Http404()
-
-    images =Image.objects.filter(profile=current_profile)
-    follows=Profile.objects.get(id=request.user.id)
-    is_follow=False
-    if follows.follow.filter(id=profile_id).exists():
-        is_follow=True
-
-    following=follows.follow.all()
-    followers=follows.user.who_following.all()
-    return render(request,'main/profile.html',{"profile_info":profile_info,"images":images,"current_id":current_id,"is_follow":is_follow,"total_following":follows.total_following(),"following":following,"followers":followers})
 
 class ProfileList(APIView):
     '''
@@ -63,16 +29,31 @@ class ProjectList(APIView):
         all_project = Project.objects.all()
         serializers = ProjectSerializer(all_project, many=True)
         return Response(serializers.data)
-     
 
+# Create your views here.
+@login_required(login_url='/accounts/login/')
+def home(request):
+    '''
+    View for the main homepage.
+    '''
+    all_projects=Project.objects.all()
+    logged_in_user = request.user
+    logged_in_user_projects=Project.objects.filter(editor=logged_in_user)
+    try:
+        profile=Profile.objects.filter(editor=logged_in_user)
+    except Profile.DoesNotExist:
+        profile=None
+    return render(request,'home.html',{"projects":logged_in_user_projects,"profile":profile,"allprojects":all_projects})
 @login_required(login_url='/accounts/login/')
 def add_project(request):
     current_user = request.user
+    print(current_user)
     if request.method == 'POST':
         form = NewProjectForm(request.POST, request.FILES)
         if form.is_valid():
             project = form.save(commit=False)
-            project.editor = current_user
+            project.editor = request.user
+          
             project.save()
         return redirect('home')
 
@@ -80,22 +61,29 @@ def add_project(request):
         form = NewProjectForm()
     return render(request, 'new_project.html', {"form": form})
 
-@login_required(login_url='/accounts/login')
-def add_project(request):
-    if request.method == 'POST':
-        uploadform = NewProjectForm(request.POST, request.FILES)
-        if uploadform.is_valid():
-            upload = uploadform.save(commit=False)
-       
-            upload.save()
-            return redirect('home_page')
-    else:
-        uploadform = NewProjectForm()
-    return render(request,'new_project.html',locals())
+@login_required(login_url='/accounts/login/')
+def single_project(request,project_id):
+    '''
+    This method displays a single photo and its details such as comments, date posted and caption
+    '''
 
+    project_posted=Project.single_project(project_id)  
+    imageId=Project.get_image_id(project_id)
+    rating=Rating.get_rating_byproject_id(project_id)
 
+    design=Rating.design
+    usability=Rating.usability
+    content=Rating.content
+    
 
+    
+    # try:
+    #     photo=Image.objects.get(id=photo_id)
 
+    # except DoesNotExist:
+    #     raise Http404()
+
+    return render(request,'project.html',{"project":project_posted})
 
 @login_required(login_url='/accounts/login/')
 def new_profile(request):
@@ -113,62 +101,7 @@ def new_profile(request):
 
     else:
         form = NewProfileForm()
-    return render(request, 'new_profile.html', {"form": form})    
-
-@login_required(login_url='/accounts/login/')
-def single_project(request,project_id):
-    '''
-    This method displays a single photo and its details such as comments, date posted and caption
-    '''
-
-    project_posted=Project.single_project(project_id)  
-    imageId=Project.get_image_id(project_id)
-    rating=Rating.get_rating_byproject_id(project_id)
-
-    design=Rating.design
-    usability=Rating.usability
-    content=Rating.content
-
-    return render(request,'project.html',{"project":project_posted})
-
- 
-@login_required(login_url='/accounts/login/')
-def add_rating(request):
-    if request.method == "POST":      
-        design = request.POST.get("design", None)
-        usability = request.POST.get("usability", None)
-        content = request.POST.get("content", None) 
-    
-    return render(request,'rate.html')
-    
-@login_required(login_url='/accounts/login/')
-def search_title(request):
-    '''
-    This method searches for an image by using the name of the image
-    '''
-    if 'title' in request.GET and request.GET["title"]:
-        search_term=request.GET.get("title")
-        searched_titles=Project.search_by_title(search_term)
-        message=f"{search_term}"
-
-        return render(request,"search.html",{"message":message,"titles":searched_titles})
-    else:
-        message="You haven't searched for any term"
-        return render(request,'search.html',{"message":message})
-
-
-def register(request):
-    if request.method =='POST':
-
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request,f' Your Account has been created for {username}!')
-            return redirect('login')
-    else:
-        form=UserRegisterForm()
-    return render(request, 'users/register.html',{'form':form})
+    return render(request, 'new_profile.html', {"form": form})
 
 @login_required(login_url='/accounts/login/')
 def display_profile(request,user_id):
@@ -183,4 +116,28 @@ def display_profile(request,user_id):
         messages.info(request,'The user has not set a profile yet')
     except Project.DoesNotExist:
         messages.info(request,'The user has not posted a project yet')
-        return redirect('home')    
+        return redirect('home')
+
+@login_required(login_url='/accounts/login/')
+def search_title(request):
+    '''
+    This method searches for an image by using the name of the image
+    '''
+    if 'title' in request.GET and request.GET["title"]:
+        search_term=request.GET.get("title")
+        searched_titles=Project.search_by_title(search_term)
+        message=f"{search_term}"
+
+        return render(request,"search.html",{"message":message,"titles":searched_titles})
+    else:
+        message="You haven't searched for any term"
+        return render(request,'search.html',{"message":message})
+        
+@login_required(login_url='/accounts/login/')
+def add_rating(request):
+    if request.method == "POST":      
+        design = request.POST.get("design", None)
+        usability = request.POST.get("usability", None)
+        content = request.POST.get("content", None) 
+    
+    return render(request,'rate.html')

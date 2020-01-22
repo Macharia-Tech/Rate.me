@@ -1,5 +1,5 @@
 {% extends 'main/base.html' %}
-{%load bootstrap3%}
+{%load bootstrap4%}
 {%load static%}
 {{block.super}}
 
@@ -25,7 +25,7 @@
 
       <form action="{% url 'add-project' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {% bootstrap_form uploadform %}
+        {% bootstrap_form form %}
         <input type="submit" class="btn btn-outline-success" value="Upload">
       </form>
 
